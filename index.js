@@ -11,16 +11,6 @@ app.use(express.json());
 
 //connection mongodb
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://mdAntor:h7HlxzP7pI28SF3M@cluster0.js1z3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  console.log("trying to connec to db")
-  client.close();
-});
-
 
 
 
