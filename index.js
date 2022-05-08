@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 5000;
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 require('dotenv').config();
 
 //cross origin resource sharing
@@ -22,15 +22,26 @@ async function run() {
     await client.connect();
     const productCollection = client.db("warehouseOfFoodCompany").collection("Products");
 
-/// for home page
-    app.get('/home', async(req,res) => {
-      const query = {};
+
+    // api for home page
+    app.get('/home', async (req, res) => {
+      const query = { };
       const cursor = productCollection.find(query);
 
       const products = await cursor.limit(6).toArray();
 
       console.log(products.length);
       res.send(products);
+    });
+
+    // api for single item inventory page
+    app.get('/singleItem/:id', async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      console.log(result.name);
+      res.send(result);
 
     });
 
