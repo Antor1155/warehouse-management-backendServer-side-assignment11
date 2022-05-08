@@ -30,7 +30,17 @@ async function run() {
 
       const products = await cursor.limit(6).toArray();
 
-      console.log(products.length);
+      res.send(products);
+    });
+
+
+    //api for getting all data
+    app.get('/manageAll', async (req, res) => {
+      const query = { };
+      const cursor = productCollection.find(query);
+
+      const products = await cursor.toArray();
+
       res.send(products);
     });
 
@@ -55,13 +65,26 @@ async function run() {
       const updatedDoc = {
         $set:updatedItem
       }
-
       const result = await productCollection.updateOne(filter,updatedDoc,option);
-
-
-      console.log('from put api ', 'id:',id, 'body',req.body);
       res.send(result);
+    })
 
+
+    // api for deleting one item 
+    app.delete("/deleteItem/:id", async(req, res)=>{
+      const id = req.params.id;
+      const query = { _id: ObjectId(id)};
+      const result = await productCollection.deleteOne(query);
+      res.send(result);
+    })
+
+
+
+    //api for adding one item
+    app.post("/addItem", async(req, res)=>{
+      const doc = req.body;
+      const result = await productCollection.insertOne(doc);
+      res.send(result);
     })
 
 
