@@ -40,17 +40,29 @@ async function run() {
 
       const query = { _id: ObjectId(id) };
       const result = await productCollection.findOne(query);
-      console.log(result.name);
       res.send(result);
-
     });
 
 
+    // api for updating one item 
+    app.put('/singleItem/:id', async(req, res)=>{
+      const id = req.params.id;
+      const updatedItem = req.body;
+
+      const filter = {_id: ObjectId(id)};
+      const option = {upsert:true};
+
+      const updatedDoc = {
+        $set:updatedItem
+      }
+
+      const result = await productCollection.updateOne(filter,updatedDoc,option);
 
 
+      console.log('from put api ', 'id:',id, 'body',req.body);
+      res.send(result);
 
-
-
+    })
 
 
 
@@ -68,11 +80,6 @@ async function run() {
 run().catch(console.dir);
 
 
-
-
-app.get('/', (req, res) => {
-  res.send('running from server');
-})
 app.listen(port, () => {
   console.log('runnig server')
 })
