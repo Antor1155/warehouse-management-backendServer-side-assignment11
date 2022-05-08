@@ -25,7 +25,7 @@ async function run() {
 
     // api for home page
     app.get('/home', async (req, res) => {
-      const query = { };
+      const query = {};
       const cursor = productCollection.find(query);
 
       const products = await cursor.limit(6).toArray();
@@ -36,7 +36,7 @@ async function run() {
 
     //api for getting all data
     app.get('/manageAll', async (req, res) => {
-      const query = { };
+      const query = {};
       const cursor = productCollection.find(query);
 
       const products = await cursor.toArray();
@@ -54,34 +54,51 @@ async function run() {
     });
 
 
+
+    // api for getting items based on email id 
+    app.get("/myItem", async (req, res) => {
+      if (req.query) {
+        const email = req.query.email;
+        const filter = {addedBy: email};
+        const result = productCollection.find(filter);
+
+        const product = await result.toArray();
+        res.send(product);
+
+      }
+    })
+
+
+
+
+
+
     // api for updating one item 
-    app.put('/singleItem/:id', async(req, res)=>{
+    app.put('/singleItem/:id', async (req, res) => {
       const id = req.params.id;
       const updatedItem = req.body;
 
-      const filter = {_id: ObjectId(id)};
-      const option = {upsert:true};
+      const filter = { _id: ObjectId(id) };
+      const option = { upsert: true };
 
       const updatedDoc = {
-        $set:updatedItem
+        $set: updatedItem
       }
-      const result = await productCollection.updateOne(filter,updatedDoc,option);
+      const result = await productCollection.updateOne(filter, updatedDoc, option);
       res.send(result);
     })
 
 
     // api for deleting one item 
-    app.delete("/deleteItem/:id", async(req, res)=>{
+    app.delete("/deleteItem/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: ObjectId(id)};
+      const query = { _id: ObjectId(id) };
       const result = await productCollection.deleteOne(query);
       res.send(result);
     })
 
-
-
     //api for adding one item
-    app.post("/addItem", async(req, res)=>{
+    app.post("/addItem", async (req, res) => {
       const doc = req.body;
       const result = await productCollection.insertOne(doc);
       res.send(result);
