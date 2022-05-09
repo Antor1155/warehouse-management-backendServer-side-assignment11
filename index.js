@@ -17,6 +17,31 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri);
 
 
+//verify jwt middle ware
+function verifyJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  console.log(authHeader);
+
+  if (!authHeader) {
+    return res.status(401).send({ message: 'unauthorized access' });
+  }
+  const token = authHeader.split(' ')[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).send({ message: "forbidden access" })
+    }
+    console.log('decoded', decoded);
+    req.decoded = decoded;
+    next();
+  })
+
+}
+
+
+
+
+
 // working with api and data collection 
 async function run() {
   try {
@@ -55,16 +80,26 @@ async function run() {
     });
 
 
+
+
+
+    ///
     // api for getting items based on email id 
-    app.get("/myItem", async (req, res) => {
+    app.get("/myItem", verifyJWT, async (req, res) => {
       if (req.query) {
+        const decodedEmail = req.decoded.email;
         const email = req.query.email;
-        const filter = {addedBy: email};
-        const result = productCollection.find(filter);
 
-        const product = await result.toArray();
-        res.send(product);
+        if (decodedEmail === email) {
+          const filter = { addedBy: email };
+          const result = productCollection.find(filter);
 
+          const product = await result.toArray();
+          res.send(product);
+        }
+        else{
+          res.status(403).send({message:"forbidden access"})
+        }
       }
     })
 
@@ -103,11 +138,11 @@ async function run() {
 
 
     // api for jwt 
-    app.post("/login", async(req, res)=>{
+    app.post("/login", async (req, res) => {
       const user = req.body;
       console.log(req.body);
       const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
-      res.send({accessToken});
+      res.send({ accessToken });
     })
 
 
