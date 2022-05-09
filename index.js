@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const { MongoClient, ObjectId } = require('mongodb');
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 //cross origin resource sharing
 const cors = require('cors');
@@ -54,7 +55,6 @@ async function run() {
     });
 
 
-
     // api for getting items based on email id 
     app.get("/myItem", async (req, res) => {
       if (req.query) {
@@ -67,10 +67,6 @@ async function run() {
 
       }
     })
-
-
-
-
 
 
     // api for updating one item 
@@ -106,6 +102,13 @@ async function run() {
 
 
 
+    // api for jwt 
+    app.post("/login", async(req, res)=>{
+      const user = req.body;
+      console.log(req.body);
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+      res.send({accessToken});
+    })
 
 
 
