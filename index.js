@@ -13,8 +13,8 @@ app.use(cors());
 app.use(express.json());
 
 //declearing mongodb
-const userName = process.env.DB_USER
-const passWord = process.env.DB_PASS
+const userName = process.env.user
+const passWord = process.env.pass
 
 const uri = `mongodb+srv://${userName}:${passWord}@cluster0.js1z3.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri);
