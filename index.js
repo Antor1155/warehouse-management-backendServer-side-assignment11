@@ -13,7 +13,10 @@ app.use(cors());
 app.use(express.json());
 
 //declearing mongodb
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.js1z3.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const userName = process.env.DB_USER
+const passWord = process.env.DB_PASS
+
+const uri = `mongodb+srv://${userName}:${passWord}@cluster0.js1z3.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri);
 
 
@@ -152,4 +155,5 @@ run().catch(console.dir);
 
 
 app.listen(port, () => {
+//    console.log("port is :", port) 
 })
